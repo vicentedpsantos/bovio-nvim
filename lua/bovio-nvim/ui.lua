@@ -26,7 +26,9 @@ function M.draw_story_info(story_table, branch)
 
   vim.api.nvim_paste("- [url](" .. story_table.app_url .. ")\n", false, -1)
   vim.api.nvim_paste("- estimate: " .. "3" .. " points\n", false, -1)
-  vim.api.nvim_paste("- started: " .. story_table.started_at .. " UTC\n", false, -1)
+  if story_table.started_at ~= nil then
+    vim.api.nvim_paste("- started: " .. story_table.started_at .. " UTC\n", false, -1)
+  end
   vim.api.nvim_paste("- labels: [" .. table.concat(vim.tbl_map(function(label) return label.name end, story_table.labels), ", ") .. "]\n", false, -1)
   vim.api.nvim_paste("- current branch: " .. branch, false, -1)
   vim.api.nvim_paste("\n\n" .. story_table.description, false, -1)
