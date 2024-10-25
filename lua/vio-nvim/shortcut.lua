@@ -1,5 +1,5 @@
 local curl = require('plenary.curl')
-local json = require('bovio-nvim.json')
+local json = require('vio-nvim.json')
 
 local M = {}
 
