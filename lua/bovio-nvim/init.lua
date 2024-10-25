@@ -19,6 +19,12 @@ local function display_story()
   end
 
   local story_table = shortcut.get_story(story_id)
+
+  if story_table == nil then
+    print("[BoVio-Nvim] Error: Could not get the story.")
+    return
+  end
+
   ui.draw_story_info(story_table, current_branch)
 end
 

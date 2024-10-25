@@ -13,7 +13,7 @@ local function create_buffer(config)
 end
 
 function M.draw_story_info(story_table, branch)
-  create_buffer({
+  local buf = create_buffer({
     relative = 'win',
     row = 10,
     col = 50,
@@ -25,7 +25,7 @@ function M.draw_story_info(story_table, branch)
   })
 
   vim.api.nvim_paste("- [url](" .. story_table.app_url .. ")\n", false, -1)
-  vim.api.nvim_paste("- estimate: " .. "3" .. " points\n", false, -1)
+  vim.api.nvim_paste("- estimate: " .. story_table.estimate.. " points\n", false, -1)
   if story_table.started_at ~= nil then
     vim.api.nvim_paste("- started: " .. story_table.started_at .. " UTC\n", false, -1)
   end
