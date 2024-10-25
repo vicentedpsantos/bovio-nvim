@@ -1,10 +1,17 @@
 local shortcut = require('vio-nvim.shortcut')
 local ui = require('vio-nvim.ui')
 
+
 --- Displays a story in a new buffer.
 --- @return nil
 local function display_story()
   local handle = io.popen("git branch --show-current")
+
+  if handle == nil then
+    print("[Vio-Nvim] Error: Could not get the current branch.")
+    return
+  end
+
   local current_branch = handle:read("*a")
   local story_id = string.sub(current_branch, 4, 9)
 
@@ -28,6 +35,19 @@ local function display_story()
   ui.draw_story_info(story_table, current_branch)
 end
 
+
+--- COMMANDS ---
+Commands = {
+  {"VioDisplayStory", display_story, { desc = "Display the Shortcut story in a new buffer." }}
+}
+
+for _, command in ipairs(Commands) do
+  vim.api.nvim_create_user_command(
+    command[1],
+    command[2],
+    command[3]
+  )
+end
 
 return {
   display_story = display_story

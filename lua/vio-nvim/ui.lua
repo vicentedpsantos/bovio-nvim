@@ -32,6 +32,11 @@ function M.draw_story_info(story_table, branch)
   vim.api.nvim_paste("- labels: [" .. table.concat(vim.tbl_map(function(label) return label.name end, story_table.labels), ", ") .. "]\n", false, -1)
   vim.api.nvim_paste("- current branch: " .. branch, false, -1)
   vim.api.nvim_paste("\n\n" .. story_table.description, false, -1)
+
+  vim.api.nvim_paste("\n\n\n### Comments: \n", false, -1)
+  for _, comment in ipairs(story_table.comments) do
+    vim.api.nvim_paste("- " .. comment.author_name .. " (" .. comment.created_at .. " UTC): " .. comment.text .. "\n\n", false, -1)
+  end
 end
 
 return M

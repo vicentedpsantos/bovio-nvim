@@ -28,6 +28,41 @@ function M.get_story(story_id)
 
   local result_table = json.decode(result.body)
 
+  local comments = {}
+
+  for _, comment in ipairs(result_table.comments) do
+    local author = M.get_member(comment.author_id)
+
+    if author == nil then
+      author = { name = "Unknown" }
+    end
+
+    table.insert(comments, {
+      author_id = comment.author_id,
+      author_name = author.profile.name,
+      created_at = comment.created_at,
+      text = comment.text
+    })
+  end
+
+  result_table["comments"] = comments
+
+  return result_table
+end
+
+--- Get Shortcut member by id. Returns a table if successful or nil if not.
+--- @param member_id string: The member id.
+--- @return table|nil: The member table or nil.
+function M.get_member(member_id)
+  local path = "members/".. member_id
+  local result = curl.get(shortcut_base_url .. path, { headers = build_headers() })
+
+  if result.status ~= 200 then
+    return nil
+  end
+
+  local result_table = json.decode(result.body)
+
   return result_table
 end
 
