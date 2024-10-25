@@ -1,5 +1,6 @@
 local curl = require('plenary.curl')
 local json = require('vio-nvim.json')
+local models = require('vio-nvim.shortcut.models')
 
 local M = {}
 
@@ -39,7 +40,7 @@ function M.get_story(story_id)
 
     table.insert(comments, {
       author_id = comment.author_id,
-      author_name = author.profile.name,
+      author_name = author.name,
       created_at = comment.created_at,
       text = comment.text
     })
@@ -47,7 +48,7 @@ function M.get_story(story_id)
 
   result_table["comments"] = comments
 
-  return result_table
+  return models.build_story(result_table)
 end
 
 --- Get Shortcut member by id. Returns a table if successful or nil if not.
@@ -63,7 +64,7 @@ function M.get_member(member_id)
 
   local result_table = json.decode(result.body)
 
-  return result_table
+  return models.build_member(result_table)
 end
 
 return M
