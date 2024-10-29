@@ -1,6 +1,7 @@
 local bovio_api_testing = require('vio-nvim.bovio_api.testing')
 local shortcut = require('vio-nvim.shortcut')
 local ui = require('vio-nvim.ui')
+local config = require('vio-nvim.config')
 
 
 --- Displays a story in a new buffer.
@@ -54,5 +55,6 @@ end
 return {
   display_story = display_story,
   bovio_api_run_file_test = bovio_api_testing.run_file_test,
-  bovio_api_run_closest_test = bovio_api_testing.run_closest_test
+  bovio_api_run_closest_test = bovio_api_testing.run_closest_test,
+  setup = config.setup
 }

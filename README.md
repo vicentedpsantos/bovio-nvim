@@ -21,35 +21,27 @@ To install vio.nvim using Lazy.nvim, add the following to your plugin configurat
 {
   "vicentedpsantos/vio-nvim",
   config = function()
-    -- Optional: Setup keybinding (explained below) 🎯
+    local shortcut_api_key = os.getenv("SHORTCUT_SERVICE_API_KEY")
 
-    vim.keymap.set("n", "<leader>ss", "<cmd>VioDisplayStory<cr>", { desc = "📖 Display Story" })
-    vim.keymap.set("n", "<leader>rt", "<cmd>RunFileTest<cr>", { desc = "🧪 Run all tests in the current file" })
-    vim.keymap.set("n", "<leader>rc", "<cmd>RunClosestTest<cr>", { desc = "🧪 Run the closest test" })
-  end
+    require("vio-nvim").setup({ shortcut_api_key = shortcut_api_key })
+
+    local wk = require("which-key")
+
+    wk.add({
+      {"<leader>ss", "<cmd>VioDisplayStory<cr>", desc = "Display Shortcut Story" },
+      {"<leader>rt",  "<cmd>BoVioAPIRunFileTest<cr>", desc = "Run test file." },
+      {"<leader>rc", "<cmd>BoVioAPIRunClosestTest<cr>", desc = "Run test file." },
+    }, {
+        mode = "n",
+        silent = true,
+    })
+  end,
 }
 ```
-
-### Using [Packer.nvim](https://github.com/wbthomason/packer.nvim)
-
-If you're using Packer, here's the configuration:
-
-```lua
-use {
-  "vicentedpsantos/vio-nvim",
-  config = function()
-    -- Optional: Setup keybinding (explained below) 🎯
-
-    vim.keymap.set("n", "<leader>ss", "<cmd>VioDisplayStory<cr>", { desc = "📖 Display Story" })
-    vim.keymap.set("n", "<leader>rt", "<cmd>RunFileTest<cr>", { desc = "🧪 Run all tests in the current file" })
-    vim.keymap.set("n", "<leader>rc", "<cmd>RunClosestTest<cr>", { desc = "🧪 Run the closest test" })
-  end
-}
-```
-
 ---
 
-🌱 Environment Variables
+## 🌱 Environment Variables
+
 To successfully fetch story information, you need to set the following environment variable:
 
 `SHORTCUT_SERVICE_API_KEY`: This key is required for authenticating requests to the shortcut service. Make sure to add it to your environment before running the plugin.

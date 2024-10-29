@@ -5,14 +5,13 @@ local models = require('vio-nvim.shortcut.models')
 local M = {}
 
 local shortcut_base_url = "https://api.app.shortcut.com/api/v3/"
-local shortcut_api_key = os.getenv("SHORTCUT_SERVICE_API_KEY")
 
 --- Build headers for Shortcut API.
 --- @return table: The headers.
 local function build_headers()
   return {
     ["Content-Type"] = "application/json",
-    ["Shortcut-Token"] = shortcut_api_key
+    ["Shortcut-Token"] = vim.g.vio_nvim_shortcut_api_key
   }
 end
 
