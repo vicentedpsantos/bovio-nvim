@@ -80,7 +80,7 @@ local function run_test_command(command)
 end
 
 -- Command to run the entire file based on test type
- function M.run_file_test()
+function M.run_file_test()
   local file_path = vim.fn.expand("%:p")
   local test_type = get_test_type(file_path)
   local command
@@ -97,7 +97,7 @@ end
 end
 
 -- Command to run the closest test based on test type
- function M.run_closest_test()
+function M.run_closest_test()
   local file_path = vim.fn.expand("%:p")
   local test_type = get_test_type(file_path)
   local closest_test_line = get_closest_test_line()

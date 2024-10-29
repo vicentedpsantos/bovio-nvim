@@ -39,8 +39,8 @@ end
 --- COMMANDS ---
 Commands = {
   {"VioDisplayStory", display_story, { desc = "Display the Shortcut story in a new buffer." }},
-  {"RunFileTest", bovio_api_testing.run_file_test, { desc = "Run BoVio API tests on whole file." }},
-  {"RunClosestTest", bovio_api_testing.run_closest_test, { desc = "Run BoVio API closest test." }}
+  {"BoVioAPIRunFileTest", bovio_api_testing.run_file_test, { desc = "Run BoVio API tests on whole file." }},
+  {"BoVioAPIRunClosestTest", bovio_api_testing.run_closest_test, { desc = "Run BoVio API closest test." }}
 }
 
 for _, command in ipairs(Commands) do
