@@ -1,24 +1,13 @@
 # 🎉 vio.nvim
 
-vio.nvim is a Neovim plugin that provides helper functions to enhance your development experience within Neovim in vio. Currently, it integrates with your git workflow to extract and display story descriptions based on your current git branch name, making it easier to stay on top of your tasks without switching contexts. 🚀
+vio.nvim is a Neovim plugin that provides helper functions to enhance your development experience within Neovim in Vio. 🚀
 
 ---
 
 ## ✨ Features
 
 - **🔍 Get Story Description from Git Branch**: Automatically fetch the story description tied to your current branch with a single command.
-
-The main function provided by this plugin is:
-
-### `display_story()`
-
-This function fetches and displays the story description based on the current git branch. 
-
-#### 💻 Usage
-
-```lua
-require"vio-nvim".display_story()
-```
+- **🧪 Run BoVio API Tests from Neovim**: Execute tests directly from your Neovim environment, with the output displayed in a separate buffer.
 
 ---
 
@@ -33,7 +22,10 @@ To install vio.nvim using Lazy.nvim, add the following to your plugin configurat
   "vicentedpsantos/vio-nvim",
   config = function()
     -- Optional: Setup keybinding (explained below) 🎯
-    vim.keymap.set("n", "<leader>bs", function() require"vio-nvim".display_story() end, { desc = "📖 Display Story" })
+
+    vim.keymap.set("n", "<leader>ss", "<cmd>VioDisplayStory<cr>", { desc = "📖 Display Story" })
+    vim.keymap.set("n", "<leader>rt", "<cmd>RunFileTest<cr>", { desc = "🧪 Run all tests in the current file" })
+    vim.keymap.set("n", "<leader>rc", "<cmd>RunClosestTest<cr>", { desc = "🧪 Run the closest test" })
   end
 }
 ```
@@ -47,22 +39,20 @@ use {
   "vicentedpsantos/vio-nvim",
   config = function()
     -- Optional: Setup keybinding (explained below) 🎯
-    vim.api.nvim_set_keymap('n', '<leader>bs', ':lua require"vio-nvim".display_story()<CR>', { noremap = true, silent = true })
+
+    vim.keymap.set("n", "<leader>ss", "<cmd>VioDisplayStory<cr>", { desc = "📖 Display Story" })
+    vim.keymap.set("n", "<leader>rt", "<cmd>RunFileTest<cr>", { desc = "🧪 Run all tests in the current file" })
+    vim.keymap.set("n", "<leader>rc", "<cmd>RunClosestTest<cr>", { desc = "🧪 Run the closest test" })
   end
 }
 ```
 
 ---
 
-## ⌨️ Keybindings
+🌱 Environment Variables
+To successfully fetch story information, you need to set the following environment variable:
 
-To create a convenient shortcut for fetching the story description, you can add the following key mapping to your Neovim configuration:
-
-```lua
-vim.keymap.set("n", "<leader>bs", function() require"vio-nvim".display_story() end, { desc = "📖 Display Story" })
-```
-
-Now, pressing `<leader>bs` in normal mode will call the `display_story()` function, displaying the story description associated with your current git branch. 📝
+`SHORTCUT_SERVICE_API_KEY`: This key is required for authenticating requests to the shortcut service. Make sure to add it to your environment before running the plugin.
 
 ---
 

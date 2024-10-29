@@ -1,3 +1,4 @@
+local bovio_api_testing = require('vio-nvim.bovio_api.testing')
 local shortcut = require('vio-nvim.shortcut')
 local ui = require('vio-nvim.ui')
 
@@ -35,10 +36,11 @@ local function display_story()
   ui.draw_story_info(story_table, current_branch)
 end
 
-
 --- COMMANDS ---
 Commands = {
-  {"VioDisplayStory", display_story, { desc = "Display the Shortcut story in a new buffer." }}
+  {"VioDisplayStory", display_story, { desc = "Display the Shortcut story in a new buffer." }},
+  {"BoVioAPIRunFileTest", bovio_api_testing.run_file_test, { desc = "Run BoVio API tests on whole file." }},
+  {"BoVioAPIRunClosestTest", bovio_api_testing.run_closest_test, { desc = "Run BoVio API closest test." }}
 }
 
 for _, command in ipairs(Commands) do
@@ -50,5 +52,7 @@ for _, command in ipairs(Commands) do
 end
 
 return {
-  display_story = display_story
+  display_story = display_story,
+  bovio_api_run_file_test = bovio_api_testing.run_file_test,
+  bovio_api_run_closest_test = bovio_api_testing.run_closest_test
 }
