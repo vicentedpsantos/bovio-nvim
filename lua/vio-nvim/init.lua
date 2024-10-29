@@ -1,4 +1,4 @@
-local bovio_api_testing = require('vio-nvim.bovio_api_testing')
+local bovio_api_testing = require('vio-nvim.bovio_api.testing')
 local shortcut = require('vio-nvim.shortcut')
 local ui = require('vio-nvim.ui')
 

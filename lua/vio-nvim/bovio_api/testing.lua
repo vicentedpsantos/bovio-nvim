@@ -1,5 +1,7 @@
-
 M = {}
+
+-- Global variable to store the test output buffer ID
+local test_output_buf = nil
 
 -- Helper function to determine the test type based on file path
 local function get_test_type(file_path)
@@ -34,39 +36,51 @@ local function get_closest_test_line()
   return nil
 end
 
+-- Function to display or create the test output buffer
+local function create_or_show_test_buffer()
+  if test_output_buf and vim.api.nvim_buf_is_valid(test_output_buf) then
+    -- Show existing buffer in a new split window
+    vim.cmd("botright split | buffer " .. test_output_buf)
+  else
+    -- Create a new buffer and window for test output
+    vim.cmd("botright vnew")
+    test_output_buf = vim.api.nvim_get_current_buf()
+
+    -- Set buffer options for test output
+    vim.api.nvim_buf_set_option(test_output_buf, "buftype", "nofile")
+    vim.api.nvim_buf_set_option(test_output_buf, "bufhidden", "hide")
+    vim.api.nvim_buf_set_option(test_output_buf, "swapfile", false)
+  end
+
+  -- Clear any previous content from buffer
+  vim.api.nvim_buf_set_lines(test_output_buf, 0, -1, false, { "Running tests, please wait..." })
+end
+
+-- Function to run tests in the test output buffer
 local function run_test_command(command)
-  -- Create a new buffer and window for test output
-  vim.cmd("botright vnew")
-  local buf = vim.api.nvim_get_current_buf()
-  
-  -- Set buffer options for test output
-  vim.api.nvim_buf_set_option(buf, "buftype", "nofile")
-  vim.api.nvim_buf_set_option(buf, "bufhidden", "wipe")
-  vim.api.nvim_buf_set_option(buf, "swapfile", false)
-  
-  -- Set a placeholder message while the tests are running
-  vim.api.nvim_buf_set_lines(buf, 0, -1, false, { "Running tests, please wait..." })
+  -- Display or create the test output buffer
+  create_or_show_test_buffer()
 
   -- Run the test command and write output to buffer
   vim.fn.jobstart(command, {
     stdout_buffered = true,
     on_stdout = function(_, data)
       if data then
-        -- Clear placeholder and display actual output
-        vim.api.nvim_buf_set_lines(buf, 0, -1, false, data)
+        -- Replace placeholder with actual output
+        vim.api.nvim_buf_set_lines(test_output_buf, 0, -1, false, data)
       end
     end,
     on_exit = function()
-      vim.api.nvim_buf_set_lines(buf, -1, -1, false, { "", "Press any key to close..." })
-      
-      -- Set up autocmd to close buffer on any key press
-      vim.api.nvim_buf_set_keymap(buf, 'n', '<any>', ':bwipeout!<CR>', { noremap = true, silent = true })
+      vim.api.nvim_buf_set_lines(test_output_buf, -1, -1, false, { "", "Press <CR> to hide..." })
+
+      -- Set up a keymap to hide the buffer on Enter
+      vim.api.nvim_buf_set_keymap(test_output_buf, 'n', '<CR>', ':hide<CR>', { noremap = true, silent = true })
     end,
   })
 end
 
 -- Command to run the entire file based on test type
-function M.run_file_test()
+ function M.run_file_test()
   local file_path = vim.fn.expand("%:p")
   local test_type = get_test_type(file_path)
   local command
@@ -83,7 +97,7 @@ function M.run_file_test()
 end
 
 -- Command to run the closest test based on test type
-function M.run_closest_test()
+ function M.run_closest_test()
   local file_path = vim.fn.expand("%:p")
   local test_type = get_test_type(file_path)
   local closest_test_line = get_closest_test_line()
@@ -99,6 +113,5 @@ function M.run_closest_test()
 
   run_test_command(command)
 end
-
 
 return M
