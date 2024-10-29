@@ -52,5 +52,7 @@ for _, command in ipairs(Commands) do
 end
 
 return {
-  display_story = display_story
+  display_story = display_story,
+  bovio_api_run_file_test = bovio_api_testing.run_file_test,
+  bovio_api_run_closest_test = bovio_api_testing.run_closest_test
 }
