@@ -1,6 +1,6 @@
 M = {}
 
-local test_output_buf = nil 
+local test_output_buf = nil
 
 local function get_test_type(file_path)
   if file_path:match("integration") and file_path:match("e2e") then
@@ -37,8 +37,8 @@ local function get_window_dimensions()
   local columns = vim.o.columns
 
   -- TODO: pass this as an option during setup.
-  local height = math.floor(lines * 0.5)
-  local width = math.floor(columns * 0.8)
+  local height = math.floor(lines * 0.8)
+  local width = math.floor(columns * 0.9)
 
   return height, width
 end
