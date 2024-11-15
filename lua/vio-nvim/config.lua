@@ -10,7 +10,7 @@ function M.setup(opts)
   if opts.output == nil then
     vim.g.bovio_output = "buffer"
   else
-    vim.g.bovio_output = "floaterm"
+    vim.g.bovio_output = opts.output
   end
 
   vim.g.vio_nvim_shortcut_api_key = opts.shortcut_api_key

@@ -45,6 +45,7 @@ To install vio.nvim using Lazy.nvim, add the following to your plugin configurat
 To successfully fetch story information, you need to set the following environment variable:
 
 `SHORTCUT_SERVICE_API_KEY`: This key is required for authenticating requests to the shortcut service. Make sure to add it to your environment before running the plugin.
+
 ---
 
 ## Running tests
@@ -56,9 +57,9 @@ The BoVio plugin allows you to run Elixir tests with the output displayed in eit
 Make sure you have the vim-floaterm plugin installed, for example:
 
 ```vim
-Copy code
 Plug 'voldikss/vim-floaterm'
 ```
+
 ### Switching to Buffer Output
 To revert to buffer output mode:
 
