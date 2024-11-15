@@ -1,8 +1,7 @@
 M = {}
 
-local test_output_buf = nil -- Global variable to store the test output buffer ID
+local test_output_buf = nil 
 
--- Helper function to determine the test type based on file path
 local function get_test_type(file_path)
   if file_path:match("integration") and file_path:match("e2e") then
     return "e2e"
@@ -14,7 +13,6 @@ local function get_test_type(file_path)
   return nil
 end
 
--- Helper function to adjust path to start from "integration" if necessary
 local function adjust_path_for_integration(file_path)
   local start_index = file_path:find("integration")
   if start_index then
@@ -23,7 +21,6 @@ local function adjust_path_for_integration(file_path)
   return file_path
 end
 
--- Function to get the closest test line (specifically on "test" keyword)
 local function get_closest_test_line()
   local cursor_line = vim.api.nvim_win_get_cursor(0)[1]
   local lines = vim.api.nvim_buf_get_lines(0, 0, -1, false)
@@ -35,78 +32,62 @@ local function get_closest_test_line()
   return nil
 end
 
--- Function to get window dimensions
 local function get_window_dimensions()
   local lines = vim.o.lines
   local columns = vim.o.columns
 
-  -- Calculate 50% height and 80% width of the current window
+  -- TODO: pass this as an option during setup.
   local height = math.floor(lines * 0.5)
   local width = math.floor(columns * 0.8)
 
   return height, width
 end
 
--- Function to run the command in Floaterm
 local function run_test_in_floaterm(command)
   local height, width = get_window_dimensions()
 
-  -- Construct the Floaterm command
   local floaterm_cmd = string.format(":FloatermNew --autoclose=0 --title=vio.nvim.tests --height=%d --width=%d %s", height, width, command)
 
-  -- Execute the Floaterm command
   vim.cmd(floaterm_cmd)
 end
 
--- Function to display or create the test output buffer
 local function create_or_show_test_buffer()
   if test_output_buf and vim.api.nvim_buf_is_valid(test_output_buf) then
-    -- Show existing buffer in a new split window
     vim.cmd("botright split | buffer " .. test_output_buf)
   else
-    -- Create a new buffer and window for test output
     vim.cmd("botright vnew")
     test_output_buf = vim.api.nvim_get_current_buf()
 
-    -- Set buffer options for test output
     vim.api.nvim_buf_set_option(test_output_buf, "buftype", "nofile")
     vim.api.nvim_buf_set_option(test_output_buf, "bufhidden", "hide")
     vim.api.nvim_buf_set_option(test_output_buf, "swapfile", false)
   end
 
-  -- Clear any previous content from buffer
   vim.api.nvim_buf_set_lines(test_output_buf, 0, -1, false, { "Running tests, please wait..." })
 end
 
--- Function to run the test command based on output type
 local function run_test_command(command)
   if vim.g.bovio_output == "floaterm" then
-    -- Run tests in Floaterm
     run_test_in_floaterm(command)
   else
-    -- Default to buffer
     create_or_show_test_buffer()
 
-    -- Run the test command and write output to buffer
     vim.fn.jobstart(command, {
       stdout_buffered = true,
       on_stdout = function(_, data)
         if data then
-          -- Replace placeholder with actual output
           vim.api.nvim_buf_set_lines(test_output_buf, 0, -1, false, data)
         end
       end,
       on_exit = function()
         vim.api.nvim_buf_set_lines(test_output_buf, -1, -1, false, { "", "Press <CR> to hide..." })
 
-        -- Set up a keymap to hide the buffer on Enter
         vim.api.nvim_buf_set_keymap(test_output_buf, 'n', '<CR>', ':hide<CR>', { noremap = true, silent = true })
       end,
     })
   end
 end
 
--- Command to run the entire file based on test type
 function M.run_file_test()
   local file_path = vim.fn.expand("%:p")
   local test_type = get_test_type(file_path)
@@ -123,7 +104,6 @@ function M.run_file_test()
   run_test_command(command)
 end
 
--- Command to run the closest test based on test type
 function M.run_closest_test()
   local file_path = vim.fn.expand("%:p")
   local test_type = get_test_type(file_path)
