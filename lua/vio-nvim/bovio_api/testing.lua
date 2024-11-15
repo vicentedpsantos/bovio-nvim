@@ -1,7 +1,6 @@
 M = {}
 
--- Global variable to store the test output buffer ID
-local test_output_buf = nil
+local test_output_buf = nil -- Global variable to store the test output buffer ID
 
 -- Helper function to determine the test type based on file path
 local function get_test_type(file_path)
@@ -36,6 +35,29 @@ local function get_closest_test_line()
   return nil
 end
 
+-- Function to get window dimensions
+local function get_window_dimensions()
+  local lines = vim.o.lines
+  local columns = vim.o.columns
+
+  -- Calculate 50% height and 80% width of the current window
+  local height = math.floor(lines * 0.5)
+  local width = math.floor(columns * 0.8)
+
+  return height, width
+end
+
+-- Function to run the command in Floaterm
+local function run_test_in_floaterm(command)
+  local height, width = get_window_dimensions()
+
+  -- Construct the Floaterm command
+  local floaterm_cmd = string.format(":FloatermNew --autoclose=0 --title=vio.nvim.tests --height=%d --width=%d %s", height, width, command)
+
+  -- Execute the Floaterm command
+  vim.cmd(floaterm_cmd)
+end
+
 -- Function to display or create the test output buffer
 local function create_or_show_test_buffer()
   if test_output_buf and vim.api.nvim_buf_is_valid(test_output_buf) then
@@ -56,27 +78,32 @@ local function create_or_show_test_buffer()
   vim.api.nvim_buf_set_lines(test_output_buf, 0, -1, false, { "Running tests, please wait..." })
 end
 
--- Function to run tests in the test output buffer
+-- Function to run the test command based on output type
 local function run_test_command(command)
-  -- Display or create the test output buffer
-  create_or_show_test_buffer()
+  if vim.g.bovio_output == "floaterm" then
+    -- Run tests in Floaterm
+    run_test_in_floaterm(command)
+  else
+    -- Default to buffer
+    create_or_show_test_buffer()
 
-  -- Run the test command and write output to buffer
-  vim.fn.jobstart(command, {
-    stdout_buffered = true,
-    on_stdout = function(_, data)
-      if data then
-        -- Replace placeholder with actual output
-        vim.api.nvim_buf_set_lines(test_output_buf, 0, -1, false, data)
-      end
-    end,
-    on_exit = function()
-      vim.api.nvim_buf_set_lines(test_output_buf, -1, -1, false, { "", "Press <CR> to hide..." })
+    -- Run the test command and write output to buffer
+    vim.fn.jobstart(command, {
+      stdout_buffered = true,
+      on_stdout = function(_, data)
+        if data then
+          -- Replace placeholder with actual output
+          vim.api.nvim_buf_set_lines(test_output_buf, 0, -1, false, data)
+        end
+      end,
+      on_exit = function()
+        vim.api.nvim_buf_set_lines(test_output_buf, -1, -1, false, { "", "Press <CR> to hide..." })
 
-      -- Set up a keymap to hide the buffer on Enter
-      vim.api.nvim_buf_set_keymap(test_output_buf, 'n', '<CR>', ':hide<CR>', { noremap = true, silent = true })
-    end,
-  })
+        -- Set up a keymap to hide the buffer on Enter
+        vim.api.nvim_buf_set_keymap(test_output_buf, 'n', '<CR>', ':hide<CR>', { noremap = true, silent = true })
+      end,
+    })
+  end
 end
 
 -- Command to run the entire file based on test type
